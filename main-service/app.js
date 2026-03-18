@@ -1,29 +1,13 @@
 const express = require('express')
 const axios =  require('axios')
 const dotenv = require('dotenv')
+const {filterTripsByDestination, sortTrips} = require('./helpers')
 dotenv.config()
 
 const app = express()
 
 const MY_API_KEY = process.env.API_KEY
 const EXTERNAL_HOST = process.env.EXTERNAL_HOST
-
-const filterTripsByDestination = (trips, destination) => {
-    if (!destination) return trips
-    return trips.filter(t => { return t.destination === destination})
-}
-
-const sortTrips = (trips, sortField) => {
-    if (!sortField) return trips
-    return trips.sort((a, b) => {
-
-        if (typeof a[sortField] === 'string') {
-            return a[sortField].localeCompare(b[sortField])
-        }
-
-        return a[sortField] - b[sortField]
-    })
-}
 
 app.get("/trips", async (req, res) => {
     try {
