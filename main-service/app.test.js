@@ -35,4 +35,15 @@ describe('Get /trips', () => {
             { "id": 2, "destination": "Oviedo", "price": 50, "duration": 2 }
         ])
     })
+
+    it('should return trips sorted by price', async () => {
+        const response = await request(app).get('/trips?sort=price')
+        expect(response.status).toBe(200)
+        expect(response.body).toEqual([
+            { "id": 2, "destination": "Oviedo", "price": 50, "duration": 2 },    
+            { "id": 1, "destination": "Madrid", "price": 100, "duration": 3 }
+        ])
+
+    })
+
 })

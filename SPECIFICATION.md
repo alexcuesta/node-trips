@@ -61,3 +61,31 @@ Response:
   { "id": 3, "destination": "Paris", "price": 90, "duration": 4 }
 ]
 ```
+
+## Task 3 (5 min)
+
+Add sorting by price.
+
+Example:
+```
+GET /trips?destination=Paris&sort=price
+```
+Expected response:
+```json
+[
+  { "id": 3, "destination": "Paris", "price": 90, "duration": 4 },
+  { "id": 1, "destination": "Paris", "price": 120, "duration": 3 }
+]
+```
+
+## Task 4 (5 min)
+Return a simplified response.
+Instead of returning the full object:
+
+Return only:
+```
+{
+  "destination": "Paris",
+  "price": 90
+}
+```

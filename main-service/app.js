@@ -13,6 +13,18 @@ const filterTripsByDestination = (trips, destination) => {
     return trips.filter(t => { return t.destination === destination})
 }
 
+const sortTrips = (trips, sortField) => {
+    if (!sortField) return trips
+    return trips.sort((a, b) => {
+
+        if (typeof a[sortField] === 'string') {
+            return a[sortField].localeCompare(b[sortField])
+        }
+
+        return a[sortField] - b[sortField]
+    })
+}
+
 app.get("/trips", async (req, res) => {
     try {
         const response = await axios.get(`${EXTERNAL_HOST}/mock/trips`, {
@@ -23,8 +35,8 @@ app.get("/trips", async (req, res) => {
 
         const trips = response.data
         const filtered = filterTripsByDestination(trips, req.query['destination'])
-
-        res.json(filtered)
+        const sorted = sortTrips(filtered, req.query['sort'])
+        res.json(sorted)
         
     } catch(error) {
         if (error.response) {
