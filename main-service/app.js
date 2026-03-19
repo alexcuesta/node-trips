@@ -1,7 +1,7 @@
 const express = require('express')
 const axios =  require('axios')
 const dotenv = require('dotenv')
-const {filterTripsByDestination, sortTrips} = require('./helpers')
+const {filterTripsByDestination, sortTrips, mapView} = require('./helpers')
 dotenv.config()
 
 const app = express()
@@ -20,7 +20,8 @@ app.get("/trips", async (req, res) => {
         const trips = response.data
         const filtered = filterTripsByDestination(trips, req.query['destination'])
         const sorted = sortTrips(filtered, req.query['sort'])
-        res.json(sorted)
+        const mappedView = mapView(sorted, req.query['view'])
+        res.json(mappedView)
         
     } catch(error) {
         if (error.response) {

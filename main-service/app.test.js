@@ -52,4 +52,13 @@ describe('Get /trips', () => {
         expect(response.body).toEqual(expectedBody)
     })
 
+    it('should return summary of trips', async () => {
+        const response = await request(app).get('/trips?view=summary')
+        expect(response.status).toBe(200)
+        expect(response.body).toEqual([
+                { "destination": "Madrid", "price": 100 },
+                { "destination": "Oviedo", "price": 50 }
+        ])
+    })
+
 })

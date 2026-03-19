@@ -15,4 +15,11 @@ const sortTrips = (trips, sortField) => {
     })
 }
 
-module.exports = { filterTripsByDestination, sortTrips}
+const mapView = (trips, view) => {
+    if (view !== 'summary') return trips 
+    return trips.map(({destination, price}) => ({destination,price}))
+}
+    
+
+
+module.exports = { filterTripsByDestination, sortTrips, mapView}
