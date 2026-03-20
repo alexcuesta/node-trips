@@ -51,8 +51,3 @@ npm run dev
 ```bash
 npm test
 ```
-
-**Run tests in watch mode:**
-```bash
-npm run test:watch
-```
