@@ -89,3 +89,12 @@ Return only:
   "price": 90
 }
 ```
+
+## Task 5 
+
+Pagination.
+
+```
+GET /trips?limit=10&offset=0
+```
+

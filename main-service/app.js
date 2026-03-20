@@ -1,13 +1,13 @@
 const express = require('express')
 const axios =  require('axios')
 const dotenv = require('dotenv')
-const {filterTripsByDestination, sortTrips, mapView} = require('./helpers')
+const {filterTripsByDestination, sortTrips, mapView, paginateTrips} = require('./helpers')
 dotenv.config()
 
 const app = express()
 
 const MY_API_KEY = process.env.API_KEY
-const EXTERNAL_HOST = process.env.EXTERNAL_HOST
+const EXTERNAL_HOST = process.env.EXTERNAL_HOST ?? 'http://localhost:3333'
 
 app.get("/trips", async (req, res) => {
     try {
@@ -19,14 +19,15 @@ app.get("/trips", async (req, res) => {
 
         const trips = response.data
         const filtered = filterTripsByDestination(trips, req.query['destination'])
-        const sorted = sortTrips(filtered, req.query['sort'])
+        const page = paginateTrips(filtered, req.query['limit'], req.query['offset'])
+        const sorted = sortTrips(page, req.query['sort'])
         const mappedView = mapView(sorted, req.query['view'])
         res.json(mappedView)
         
     } catch(error) {
         if (error.response) {
             console.log(`Error response: ${error.response.data}`)
-            res.status(500).status(error.response.status).json(error.response.data)
+            res.status(error.response.status).json(error.response.data)
         } else {
             console.log("Generic error from mock: " + error)
             res.status(500).send("Generic error: " + error)
