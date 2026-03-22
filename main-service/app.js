@@ -1,40 +1,37 @@
 const express = require('express')
-const axios =  require('axios')
-const dotenv = require('dotenv')
+
 const {filterTripsByDestination, sortTrips, mapView, paginateTrips} = require('./helpers')
+const { fetchTrips } = require('./services/tripsService')
+const { ServiceUnavailableError, ServiceTimeoutError } = require('./services/tripsErrors')
+
+const dotenv = require('dotenv')
 dotenv.config()
 
 const app = express()
 
-const MY_API_KEY = process.env.API_KEY
+const MY_API_KEY = process.env.API_KEY // we can validate using 'envalid' dependency
 const EXTERNAL_HOST = process.env.EXTERNAL_HOST ?? 'http://localhost:3333'
 
 app.get("/trips", async (req, res) => {
     try {
-        const response = await axios.get(`${EXTERNAL_HOST}/mock/trips`, {
-                headers: {
-                    "x-api-key": MY_API_KEY
-                }
-            })
+        const trips = await fetchTrips(MY_API_KEY, EXTERNAL_HOST)
 
-        const trips = response.data
         const filtered = filterTripsByDestination(trips, req.query['destination'])
         const page = paginateTrips(filtered, req.query['limit'], req.query['offset'])
         const sorted = sortTrips(page, req.query['sort'])
         const mappedView = mapView(sorted, req.query['view'])
+
         res.json(mappedView)
         
     } catch(error) {
-        if (error.response) {
-            console.log(`Error response: ${error.response.data}`)
-            res.status(error.response.status).json(error.response.data)
-        } else {
-            console.log("Generic error from mock: " + error)
-            res.status(500).send("Generic error: " + error)
-        }
-    } finally {
-        console.log("Finalising axios call")
-    }
+        if (error instanceof ServiceUnavailableError) {
+            res.status(503).json(error.message) // Service unavailable
+        } 
+        if (error instanceof ServiceTimeoutError) {
+            res.status(504).json(error.message) // Service timed out
+        } 
+        res.status(500).send("Unexpected error: " + error)
+    } 
 })
 
 

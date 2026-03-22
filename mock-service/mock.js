@@ -5,7 +5,7 @@ const port = 3333
 const API_KEY = "secret"
 let callsCounter = 0
 
-app.get("/mock/trips", (req, res) => {
+app.get("/mock/trips", async (req, res) => {
     callsCounter++
     console.log(`Mock trips called ${callsCounter}`)
 
@@ -14,6 +14,10 @@ app.get("/mock/trips", (req, res) => {
         console.log("Provided api key is invalid ${apiKey}")
         return res.status(401).json({ error: 'Unauthorized'})
     }
+
+    // delay
+    const delay = 0
+    await new Promise(resolve => setTimeout(resolve, delay))
 
     const mockTrips = [
         { "id": 1, "destination": "Paris", "price": 120, "duration": 3 },
