@@ -4,24 +4,12 @@ const {filterTripsByDestination, sortTrips, mapView, paginateTrips} = require('.
 const { fetchTrips } = require('./services/tripsService')
 const { ServiceUnavailableError, ServiceTimeoutError } = require('./services/tripsErrors')
 
-const dotenv = require('dotenv')
-dotenv.config()
-
 const app = express()
-
-const MY_API_KEY = process.env.API_KEY // we can validate using 'envalid' dependency
-const EXTERNAL_HOST = process.env.EXTERNAL_HOST ?? 'http://localhost:3333'
 
 app.get("/trips", async (req, res) => {
     try {
-        const trips = await fetchTrips(MY_API_KEY, EXTERNAL_HOST)
-
-        const filtered = filterTripsByDestination(trips, req.query['destination'])
-        const page = paginateTrips(filtered, req.query['limit'], req.query['offset'])
-        const sorted = sortTrips(page, req.query['sort'])
-        const mappedView = mapView(sorted, req.query['view'])
-
-        res.json(mappedView)
+        const trips = await fetchTrips()
+        res.json(trips)
         
     } catch(error) {
         if (error instanceof ServiceUnavailableError) {
@@ -33,6 +21,5 @@ app.get("/trips", async (req, res) => {
         res.status(500).send("Unexpected error: " + error)
     } 
 })
-
 
 module.exports = app
